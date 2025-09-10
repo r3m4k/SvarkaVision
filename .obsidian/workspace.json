@@ -89,7 +89,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 233.5
   },
   "right": {
     "id": "53abb902cbce1eb1",
@@ -182,15 +182,15 @@
   },
   "active": "04507e766b203e83",
   "lastOpenFiles": [
+    "Список оборудования.md",
+    "Заявка на акселератор.md",
+    "Рецензия DeepSeek.md",
+    "Задачи на выполенение.md",
     "dev/python/SvarkaAI/report.py~",
     "dev/python/main.py",
     "dev/python/SvarkaAI/report.py",
     "dev/python/SvarkaAI/__init__.py",
     "dev/python/SvarkaAI",
-    "Список оборудования.md",
-    "Заявка на акселератор.md",
-    "Задачи на выполенение.md",
-    "Рецензия DeepSeek.md",
     "Untitled",
     "Obsidian_Саша/Заметки и другие записи.md",
     "Obsidian_Рома/Заметки и другие записи.md",
