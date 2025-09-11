@@ -4,21 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "dbe30be4dcea7b87",
+        "id": "4b3210fe6cc956e4",
         "type": "tabs",
         "children": [
           {
-            "id": "b14460c34457370f",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
-            }
-          },
-          {
-            "id": "04507e766b203e83",
+            "id": "ef3300084905a372",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -31,8 +21,7 @@
               "title": "Задачи на выполенение"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -105,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Заявка на акселератор.md",
+                "file": "Задачи на выполенение.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Заявка на акселератор"
+              "title": "Backlinks for Задачи на выполенение"
             }
           },
           {
@@ -124,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Заявка на акселератор.md",
+                "file": "Задачи на выполенение.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Заявка на акселератор"
+              "title": "Outgoing links from Задачи на выполенение"
             }
           },
           {
@@ -161,12 +150,23 @@
               "icon": "lucide-list",
               "title": "Outline of Заявка на акселератор"
             }
+          },
+          {
+            "id": "45d7a9f4147935ce",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {},
+              "icon": "spreadsheet",
+              "title": "Advanced Tables"
+            }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 332.5,
     "collapsed": true
   },
   "left-ribbon": {
@@ -177,15 +177,18 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "04507e766b203e83",
+  "active": "ef3300084905a372",
   "lastOpenFiles": [
     "Список оборудования.md",
+    "Untitled.base",
     "Заявка на акселератор.md",
-    "Рецензия DeepSeek.md",
+    "2025-09-11.md",
     "Задачи на выполенение.md",
+    "Рецензия DeepSeek.md",
     "dev/python/SvarkaAI/report.py~",
     "dev/python/main.py",
     "dev/python/SvarkaAI/report.py",
