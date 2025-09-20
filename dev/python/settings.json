@@ -1,0 +1,8 @@
+{
+  "PhotoReceiver": {
+    "port":  5000,
+    "photo_source": "local_dir"
+  },
+  "QualityController": {"port":  5050},
+  "ReportSender": {"port":  5005}
+}
