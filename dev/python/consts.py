@@ -2,6 +2,19 @@
 
 # --------------------------------------
 
+class Mode:
+    DEBUG = "debug"
+    RELEASE = "release"
+    TEST = "test"
+
+# --------------------------------------
+
+class LogLevel:
+    DEBUG = "Debug"
+    INFO = "Info"
+
+# --------------------------------------
+
 # Относительный путь к json файлу с настройками
 SETTINGS_FILE = './settings.json'
 

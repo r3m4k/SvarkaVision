@@ -1,8 +1,19 @@
 {
-  "PhotoReceiver": {
-    "port":  5000,
-    "photo_source": "local_dir"
-  },
-  "QualityController": {"port":  5050},
-  "ReportSender": {"port":  5005}
+    "Mode": "debug",
+    "LogLevel": "Info",
+    "PhotoReceiver": {
+        "host": "localhost",
+        "port": 5050,
+        "sources_params": {
+            "camera": {},
+            "local_dir": {
+                "path": "./WeldDataset"
+            }
+        }
+    },
+    "QualityController": {},
+    "ReportSender": {
+        "host": "localhost",
+        "port": 5005
+    }
 }
