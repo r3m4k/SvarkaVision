@@ -45,7 +45,7 @@ class PhotoSource:
     """
 
     def __init__(self):
-        self._source: str = None
+        self._source: str = ''
         self._source_params: dict[str, Any]
         self._photo_queue: Queue[str] = Queue()
         self._loading_thread: Thread = Thread()
@@ -60,9 +60,18 @@ class PhotoSource:
         self._setup()
 
     def __del__(self):
+        print('PhotoSource --> __dell__')
+        self.cleanup()
+
+    def cleanup(self):
+        """
+        Явный метод отчистки ресурсов класса
+        """
+        print('PhotoSource --> cleanup')
+
         self._loading_flag = False
-        self._loading_thread.join()
         sleep(0.5)
+        self._loading_thread.join()
 
     def _setup(self):
         """

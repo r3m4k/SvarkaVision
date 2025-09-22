@@ -9,6 +9,7 @@ from queue import Empty
 from consts import Mode, SETTINGS_FILE
 from settings_manager import SettingsManager
 from PhotoReceiving import PhotoSource
+from CommunationInterfaces import run_report_sender
 
 ##########################################################
 
@@ -52,6 +53,10 @@ def main():
 
     except Empty:
         print('\nEnd of photo queue\n')
+
+    run_report_sender()
+
+    photo_source.cleanup()
 
 
 # --------------------------------------

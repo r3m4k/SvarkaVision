@@ -40,6 +40,6 @@ class AppConfig(TypedDict):
     """
     Mode: str
     LogLevel: str
-    PhotoReceiver: PhotoReceiverConfig
+    PhotoReceiving: PhotoReceiverConfig
     QualityController: QualityControllerConfig
     ReportSender: ReportSenderConfig

@@ -1,7 +1,7 @@
 {
     "Mode": "debug",
     "LogLevel": "Info",
-    "PhotoReceiver": {
+    "PhotoReceiving": {
         "host": "localhost",
         "port": 5050,
         "sources_params": {
