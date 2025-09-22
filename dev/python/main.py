@@ -8,7 +8,7 @@ from queue import Empty
 # User imports
 from consts import Mode, SETTINGS_FILE
 from settings_manager import SettingsManager
-from PhotoReceiver import PhotoSource
+from PhotoReceiving import PhotoSource
 
 ##########################################################
 

@@ -19,3 +19,9 @@ class PhotoReceiver:
 
     def _init_server(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def _requests_handler(self):
+        """
+        Обработчик запросов
+        """
+        pass

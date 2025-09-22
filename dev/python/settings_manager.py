@@ -36,7 +36,7 @@ class SettingsManager:
         return {
             "Mode": Mode.DEBUG,
             "LogLevel": LogLevel.INFO,
-            "PhotoReceiver": {
+            "PhotoReceiving": {
                 "host": "localhost",
                 "port": 5050,
                 "sources_params": {
