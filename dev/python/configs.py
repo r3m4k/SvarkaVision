@@ -1,5 +1,6 @@
 # System imports
-from typing import TypedDict, NotRequired
+from typing import TypedDict, NotRequired, Optional
+from enum import Enum
 
 # External imports
 
@@ -43,3 +44,20 @@ class AppConfig(TypedDict):
     PhotoReceiving: PhotoReceiverConfig
     QualityController: QualityControllerConfig
     ReportSender: ReportSenderConfig
+
+class AppConfigKeys(str, Enum):
+    Mode = "Mode"
+    LogLevel = "LogLevel"
+    PhotoReceiving = "PhotoReceiving"
+    QualityController = "QualityController"
+    ReportSender = "ReportSender"
+
+    @classmethod
+    def from_string(cls, key_str: str) -> 'AppConfigKeys':
+        """ Приведение строки к AppConfigKeys """
+        try:
+            return cls(key_str.strip())
+        except ValueError:
+            raise KeyError()
+
+# --------------------------------------

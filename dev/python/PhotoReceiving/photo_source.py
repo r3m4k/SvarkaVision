@@ -14,7 +14,7 @@ from consts import Mode
 
 ##########################################################
 
-class SourceStatus:
+class SourceStatus(Enum):
     """
     Класс для хранения состояния источника фотографий
     """
@@ -22,6 +22,7 @@ class SourceStatus:
     Initialized = 'Initialized'
     Active = 'Active'
     Stopped = 'Stopped'
+    CleanedUp = 'CleanedUp'
 
     # Конкретные состояния, описывающие причину остановки
     EndOfDataset = 'EndOfDataset'
@@ -52,7 +53,7 @@ class PhotoSource:
         self._loading_flag = False
 
         # Статус, который будем менять в зависимости от состояния источника
-        self._source_status: str = SourceStatus.Initialized
+        self._source_status: SourceStatus = SourceStatus.Initialized
 
         # Текущая стадия обработки фотографии
         self._current_stage: PhotoProcessingStage = PhotoProcessingStage.AWAITING_PHOTO
@@ -60,17 +61,17 @@ class PhotoSource:
         self._setup()
 
     def __del__(self):
-        print('PhotoSource --> __dell__')
-        self.cleanup()
+        if self._source_status is not SourceStatus.CleanedUp:
+            self.cleanup()
 
     def cleanup(self):
         """
-        Явный метод отчистки ресурсов класса
+        Явный метод отчистки использованных ресурсов
         """
-        print('PhotoSource --> cleanup')
-
+        # print('cleanup')
+        self._source_status = SourceStatus.CleanedUp
         self._loading_flag = False
-        sleep(0.5)
+        sleep(0.1)
         self._loading_thread.join()
 
     def _setup(self):

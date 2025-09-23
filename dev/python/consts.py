@@ -24,3 +24,27 @@ SETTINGS_FILE = './settings.json'
 DATASET_DIR = './WeldDataset'
 
 # --------------------------------------
+
+from configs import AppConfig
+
+DEFAULT_SETTINGS: AppConfig = {
+            "Mode": Mode.DEBUG,
+            "LogLevel": LogLevel.INFO,
+            "PhotoReceiving": {
+                "host": "localhost",
+                "port": 5050,
+                "sources_params": {
+                    "camera": {},
+                    "local_dir": {
+                        "path": "./WeldDataset"
+                    }
+                }
+            },
+            "QualityController": {},
+            "ReportSender": {
+                "host": "localhost",
+                "port": 5005
+            }
+        }
+
+# --------------------------------------
