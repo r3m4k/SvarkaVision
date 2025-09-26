@@ -1,5 +1,5 @@
 # System imports
-from typing import TypedDict, NotRequired, Optional
+from typing import TypedDict, NotRequired
 from enum import Enum
 
 # External imports
@@ -16,6 +16,7 @@ class PhotoReceiverConfig(TypedDict):
     port: int
     sources_params: dict
 
+# --------------------------------------
 
 class QualityControllerConfig(TypedDict):
     """
@@ -24,6 +25,7 @@ class QualityControllerConfig(TypedDict):
     """
     name: NotRequired[str]
 
+# --------------------------------------
 
 class ReportSenderConfig(TypedDict):
     """
