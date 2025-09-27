@@ -1,6 +1,4 @@
 
 dev/python/.idea/
+**/__pycache__/
 
-dev/python/__pycache__/
-
-dev/python/PhotoReceiving/__pycache__/
