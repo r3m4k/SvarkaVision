@@ -1,26 +1,29 @@
 # System imports
+from abc import abstractmethod
 from threading import Thread
 from time import sleep
 from typing import Type
 
 from queue import Queue as ThreadQueue
-from multiprocessing import Process, Queue as ProcessQueue, Pipe
+from multiprocessing import Process, Queue as ProcessQueue
 
 # External imports
 
 # User imports
+from Factories import Resource
 from .multiprocessing_worker import MultiprocessingWorker
 from .utils import run_in_new_process, run_mlt_worker
 from .message import MessageMode, Message
 
 ##########################################################
 
-class MultiprocessingManager:
+class MultiprocessingManager(Resource):
     """
     Базовый менеджер с функционалом для взаимодействия с работником, работающий в дочернем процессе,
     и для взаимодействия с основным циклом программы, который запущен в этом же процессе.
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         # Работник, с которым взаимодействует менеджер
         self._worker: Type[MultiprocessingWorker] = MultiprocessingWorker
@@ -33,8 +36,8 @@ class MultiprocessingManager:
 
         # Создание инструментов коммуникации с работником
         self._process = Process()                               # Процесс, в котором будет запущен работник
-        self._msg_queue: ProcessQueue[str] = ProcessQueue()     # Очередь поступивших сообщений от работника
-        self._worker_queue: ProcessQueue[str] = ProcessQueue()  # Очередь для отправки команд работнику
+        self._msg_queue: ProcessQueue = ProcessQueue()          # Очередь поступивших сообщений от работника
+        self._worker_queue: ProcessQueue = ProcessQueue()       # Очередь для отправки команд работнику
 
         # Необходимые флаги
         self._command_checking_flag: bool = True
@@ -50,11 +53,15 @@ class MultiprocessingManager:
 
     def cleanup(self):
         """ Явный метод отчистки использованных ресурсов """
+        print('MultiprocessingManager --> cleanup')
         self._cleanup_done_flag= True
         self._command_checking_flag = False
 
         self._worker_queue.put('cleanup')
-        self._command_checker.join()
+        try:
+            self._command_checker.join()
+        except RuntimeError:
+            pass
 
     def new_command(self, command: str):
         """ Отработка поступления новой команды """
@@ -68,5 +75,10 @@ class MultiprocessingManager:
             else:
                 sleep(1)
 
+    @abstractmethod
     def _requests_handler(self, request: str):
+        """
+        Абстрактный метод для обработки поступивших запросов
+        из основного потока программы
+        """
         pass

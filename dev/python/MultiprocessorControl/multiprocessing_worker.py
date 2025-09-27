@@ -16,7 +16,7 @@ class MultiprocessingWorker:
     Также автоматически выполняет очистку ресурсов при удалении объекта.
     """
 
-    def __init__(self, command_queue: ProcessQueue[str], message_queue: ProcessQueue[str], ):
+    def __init__(self, command_queue: ProcessQueue, message_queue: ProcessQueue):
         self._command_queue = command_queue     # Очередь поступивших команд из основного процесса
         self._message_queue = message_queue     # Очередь для отправки сообщений в основной процесс
 

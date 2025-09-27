@@ -1,43 +1,45 @@
 # System imports
+import sys
 import json
 from pprint import pprint
 from queue import Empty
+import signal
 
 # External imports
 
 # User imports
 from consts import Mode, SETTINGS_FILE
 from settings_manager import SettingsManager
-from PhotoReceiving import PhotoSource
+# from PhotoReceiving import PhotoSource
 from CommunationInterfaces import run_report_sender
+from Factories import ResourcesStorage
+from Factories import PhotoReceiverManagerFactory
+
 
 ##########################################################
 
 def setup_project():
     """
-    Создание и запуск всех процессов
+    Настройка проекта
     """
-    pass
+    print(f'ResourcesStorage:\n'
+          f'{ResourcesStorage()}')
+    for sig in [signal.SIGINT, signal.SIGTERM]:
+        signal.signal(sig, enf_of_program)
 
 def test():
     """
     Запуск тестов
     """
-    # Загрузка параметров в settings.json
-    with open(SETTINGS_FILE, 'r') as settings_file:
-        settings = json.load(settings_file)
-
-    settings['Mode'] = Mode.RELEASE
-    with open(f'{SETTINGS_FILE}', 'w') as settings_file:
-        json.dump(settings, settings_file)
-
+    pass
 
 def main():
     """
     Запуск всего проекта
     """
-
     print('Запуск проекта')
+
+    setup_project()
 
     settings_manager = SettingsManager()
     settings_manager.update_setting('Mode', Mode.DEBUG)
@@ -46,18 +48,24 @@ def main():
     pprint(settings_manager.settings)
     print()
 
-    photo_source = PhotoSource()
-    try:
-        while True:
-            print(photo_source.get_photo())
+    # run_report_sender()
+    PhotoReceiverManagerFactory().create_resource()
 
-    except Empty:
-        print('\nEnd of photo queue\n')
+    print('Программа выполнила все действия.\n'
+          'Ожидание завершения работы пользователем')
+    while True:
+        continue
 
-    run_report_sender()
 
-    photo_source.cleanup()
+def enf_of_program(signum, frame):
+    signals = {'2': 'signal.SIGINT', '15': 'signal.SIGTERM'}
+    print(f'Получен сигнал {signals[str(signum)]}')
 
+    print(f'ResourcesStorage:\n'
+          f'{ResourcesStorage()}')
+    ResourcesStorage().cleanup()
+
+    sys.exit(0)
 
 # --------------------------------------
 

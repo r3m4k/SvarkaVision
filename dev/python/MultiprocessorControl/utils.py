@@ -16,8 +16,8 @@ def run_in_new_process(func: Callable, *args, **kwargs) -> Process:
     return process
 
 def run_mlt_worker(mlt_worker_type: Type[MultiprocessingWorker],
-                   command_queue: Queue[str],
-                   message_queue: Queue[str]):
+                   command_queue: Queue,
+                   message_queue: Queue):
     """
     Создание объекта работника с заданными каналами связи
     :param mlt_worker_type: тип работника
