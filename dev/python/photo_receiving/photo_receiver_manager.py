@@ -3,7 +3,7 @@
 # External imports
 
 # User imports
-from MultiprocessorControl import MultiprocessingManager
+from multiprocessor_control import MultiprocessingManager
 from .photo_receiver import PhotoReceiver
 
 ##########################################################
@@ -13,12 +13,9 @@ class PhotoReceiverManager(MultiprocessingManager):
     Класс, предназначенный для запуска приёмника фотографий
     и для управления им
     """
-    def __init__(self, resource_name: str):
+    def __init__(self, resource_name: str, **kwargs):
         super().__init__(resource_name)
         self._worker= PhotoReceiver
-
-    def _requests_handler(self, request: str):
-        pass
 
 # --------------------------------------
 

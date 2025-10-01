@@ -28,7 +28,7 @@ class Message:
         self._separator = '__'
 
     def __str__(self):
-        print('1')
+        # print('1')
         return self.mode.value + self._separator + self.body
 
     def from_string(self, str_msg: str):

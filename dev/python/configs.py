@@ -50,7 +50,7 @@ class AppConfig(TypedDict):
 class AppConfigKeys(str, Enum):
     Mode = "Mode"
     LogLevel = "LogLevel"
-    PhotoReceiving = "PhotoReceiving"
+    PhotoReceiving = "photo_receiving"
     QualityController = "QualityController"
     ReportSender = "ReportSender"
 

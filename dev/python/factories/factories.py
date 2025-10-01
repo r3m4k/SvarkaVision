@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 # User imports
 from .resources_storage import Resource, ResourcesStorage
-from PhotoReceiving import PhotoReceiverManager
+from photo_receiving import PhotoReceiverManager
 
 ##########################################################
 
@@ -29,8 +29,8 @@ class BaseFactory(ABC):
 
 class PhotoReceiverManagerFactory(BaseFactory):
     """ Фабрика менеджеров для приёмника фотографий """
-    def create_resource(self, resource_name: str = 'photo_receiver_manager') -> Resource:
+    def create_resource(self, resource_name: str = 'photo_receiver_manager', **kwargs) -> Resource:
         """ Создание PhotoReceiverManager """
-        resource = PhotoReceiverManager(resource_name=resource_name)
+        resource = PhotoReceiverManager(resource_name=resource_name, **kwargs)
         self._register_resource(resource)
         return resource

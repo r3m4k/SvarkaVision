@@ -30,7 +30,7 @@ from configs import AppConfig
 DEFAULT_SETTINGS: AppConfig = {
             "Mode": Mode.DEBUG,
             "LogLevel": LogLevel.INFO,
-            "PhotoReceiving": {
+            "photo_receiving": {
                 "host": "localhost",
                 "port": 5050,
                 "sources_params": {

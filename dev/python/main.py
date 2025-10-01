@@ -10,10 +10,10 @@ import signal
 # User imports
 from consts import Mode, SETTINGS_FILE
 from settings_manager import SettingsManager
-# from PhotoReceiving import PhotoSource
-from CommunationInterfaces import run_report_sender
-from Factories import ResourcesStorage
-from Factories import PhotoReceiverManagerFactory
+# from photo_receiving import PhotoSource
+from communication_interfaces import run_report_sender
+from factories import ResourcesStorage
+from factories import PhotoReceiverManagerFactory
 
 
 ##########################################################
@@ -63,7 +63,7 @@ def enf_of_program(signum, frame):
 
     print(f'ResourcesStorage:\n'
           f'{ResourcesStorage()}')
-    ResourcesStorage().cleanup()
+    ResourcesStorage().cleanup_all()
 
     sys.exit(0)
 

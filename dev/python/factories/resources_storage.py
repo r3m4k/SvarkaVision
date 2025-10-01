@@ -21,6 +21,18 @@ class Resource(ABC):
         """ Явный метод отчистки """
         pass
 
+    @abstractmethod
+    def setup(self):
+        """ Конфигурация ресурса """
+
+    @abstractmethod
+    def commands_executor(self, command: str):
+        """
+        Функция для выполнения поступившей команды.
+        Данный метод вызывается напрямую из основного потока.
+        """
+        pass
+
 # --------------------------------------
 
 class ResourcesStorage(Singleton):
@@ -42,12 +54,19 @@ class ResourcesStorage(Singleton):
     def add_resource(self, resource: Resource):
         self._resources[resource.name] = resource
 
-    def cleanup(self):
+    def cleanup_all(self):
         """
         Явный вызов методов cleanup у всех сохранённых ресурсов
         """
         for resource in self._resources.values():
             resource.cleanup()
+
+    def setup_all(self):
+        """
+        Явный метод конфигурирования всех ресурсов
+        """
+        for resource in self._resources.values():
+            resource.setup()
 
     def __str__(self):
         return pformat(self._resources)

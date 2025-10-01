@@ -88,7 +88,7 @@ class PhotoSource:
                 self._source = 'local_dir'
             case _:
                 pass
-        self._source_params = settings_manager.settings['PhotoReceiving']['sources_params']
+        self._source_params = settings_manager.settings['photo_receiving']['sources_params']
         self._source_status = SourceStatus.Active
         self._loading_thread = Thread(target=self._infinite_loading_photo, args=(), daemon=True)
 

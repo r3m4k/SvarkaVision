@@ -5,13 +5,14 @@ import socket
 
 # User imports
 from settings_manager import SettingsManager
-from MultiprocessorControl import MultiprocessingWorker
+from multiprocessor_control import MultiprocessingWorker
 from .photo_source import PhotoSource
 
 ##########################################################
 
 class PhotoReceiver(MultiprocessingWorker):
     def __init__(self):
+        super().__init__()
         self.server: socket.socket = None
         self._photo_source: PhotoSource = PhotoSource()
 
@@ -22,8 +23,8 @@ class PhotoReceiver(MultiprocessingWorker):
     def _init_server(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         settings_manager = SettingsManager()
-        host = settings_manager.settings['PhotoReceiving']['host']
-        port = settings_manager.settings['PhotoReceiving']['port']
+        host = settings_manager.settings['photo_receiving']['host']
+        port = settings_manager.settings['photo_receiving']['port']
 
     def _requests_handler(self):
         """
