@@ -4,17 +4,17 @@ import json
 from pprint import pprint
 from queue import Empty
 import signal
+from time import sleep
 
 # External imports
 
 # User imports
-from consts import Mode, SETTINGS_FILE
+from consts import Mode, SETTINGS_FILE, signals
 from settings_manager import SettingsManager
-# from photo_receiving import PhotoSource
-from communication_interfaces import run_report_sender
 from factories import ResourcesStorage
 from factories import PhotoReceiverManagerFactory
-
+from messages_to_main import MessagesToMainChecker, MessagesToMain
+from photo_receiving import PhotoReceiverManager
 
 ##########################################################
 
@@ -22,10 +22,22 @@ def setup_project():
     """
     Настройка проекта
     """
-    print(f'ResourcesStorage:\n'
-          f'{ResourcesStorage()}')
-    for sig in [signal.SIGINT, signal.SIGTERM]:
+    resource_storage = ResourcesStorage()
+
+    # Подключим обработку завершающих сигналов
+    for sig in signals.keys():
         signal.signal(sig, enf_of_program)
+
+    # Инициализируем источник фотографий
+    PhotoReceiverManagerFactory().create_resource()
+
+    # Инициализируем проверку сообщений в основной поток
+    # ВАЖНО инициализировать проверку сообщений в самом конце, для отработки всех сообщений
+    MessagesToMainChecker()
+
+    # Запустим все ресурсы
+    resource_storage.setup_all()
+
 
 def test():
     """
@@ -33,37 +45,32 @@ def test():
     """
     pass
 
+
 def main():
     """
     Запуск всего проекта
     """
     print('Запуск проекта')
 
-    setup_project()
-
     settings_manager = SettingsManager()
     settings_manager.update_setting('Mode', Mode.DEBUG)
     settings_manager.save_settings()
 
-    pprint(settings_manager.settings)
-    print()
+    setup_project()
 
-    # run_report_sender()
-    PhotoReceiverManagerFactory().create_resource()
-
-    print('Программа выполнила все действия.\n'
-          'Ожидание завершения работы пользователем')
     while True:
-        continue
+        sleep(1)
 
 
 def enf_of_program(signum, frame):
-    signals = {'2': 'signal.SIGINT', '15': 'signal.SIGTERM'}
-    print(f'Получен сигнал {signals[str(signum)]}')
+    resource_storage = ResourcesStorage()
+
+    print(f'Получен сигнал {signals[signum]}')
+    resource_storage.cleanup_all()
 
     print(f'ResourcesStorage:\n'
-          f'{ResourcesStorage()}')
-    ResourcesStorage().cleanup_all()
+          f'{resource_storage}')
+    print(f'MessagesToMain().qsize(): {MessagesToMain().qsize()}')
 
     sys.exit(0)
 

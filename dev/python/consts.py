@@ -30,7 +30,7 @@ from configs import AppConfig
 DEFAULT_SETTINGS: AppConfig = {
             "Mode": Mode.DEBUG,
             "LogLevel": LogLevel.INFO,
-            "photo_receiving": {
+            "PhotoReceiving": {
                 "host": "localhost",
                 "port": 5050,
                 "sources_params": {
@@ -46,5 +46,16 @@ DEFAULT_SETTINGS: AppConfig = {
                 "port": 5005
             }
         }
+
+# --------------------------------------
+
+import signal
+
+# Словарь с сигналами завершения работы, которые будут обработаны
+signals = {
+    signal.SIGINT: 'signal.SIGINT',
+    signal.SIGTERM: 'signal.SIGTERM'
+}
+
 
 # --------------------------------------

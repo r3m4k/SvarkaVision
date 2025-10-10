@@ -26,7 +26,7 @@ class Resource(ABC):
         """ Конфигурация ресурса """
 
     @abstractmethod
-    def commands_executor(self, command: str):
+    def commands_executor(self, command_name: str, *args, **kwargs):
         """
         Функция для выполнения поступившей команды.
         Данный метод вызывается напрямую из основного потока.

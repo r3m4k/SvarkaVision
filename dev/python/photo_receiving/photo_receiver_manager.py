@@ -15,9 +15,6 @@ class PhotoReceiverManager(MultiprocessingManager):
     """
     def __init__(self, resource_name: str, **kwargs):
         super().__init__(resource_name)
-        self._worker= PhotoReceiver
+        self._worker = PhotoReceiver
 
 # --------------------------------------
-
-def run_photo_receiver():
-    pass
