@@ -9,7 +9,7 @@ from queue import Queue
 # External imports
 
 # User imports
-from settings_manager import SettingsManager
+from utils import SettingsManager
 from consts import Mode
 
 ##########################################################

@@ -9,7 +9,7 @@ from multiprocessing import Process, Queue as ProcessQueue
 
 # User imports
 from factories import Resource
-from messages_to_main import MessagesToMain
+from utils import MessagesToMain
 from .multiprocessing_worker import MultiprocessingWorker
 from .utils import run_in_new_process, run_mlt_worker
 from messages import MessageMode, Message

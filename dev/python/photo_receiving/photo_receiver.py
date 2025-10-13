@@ -1,12 +1,11 @@
 # System imports
 import socket
 from threading import Thread
-from time import sleep
 
 # External imports
 
 # User imports
-from settings_manager import SettingsManager
+from utils import SettingsManager
 from multiprocessor_control import MultiprocessingWorker
 from messages import Message, MessageMode
 from .photo_source import PhotoSource

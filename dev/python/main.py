@@ -1,20 +1,18 @@
 # System imports
 import sys
-import json
-from pprint import pprint
-from queue import Empty
 import signal
+import os
 from time import sleep
 
 # External imports
 
 # User imports
-from consts import Mode, SETTINGS_FILE, signals
-from settings_manager import SettingsManager
+from consts import Mode, signals, debug_dir
 from factories import ResourcesStorage
 from factories import PhotoReceiverManagerFactory
-from messages_to_main import MessagesToMainChecker, MessagesToMain
-from photo_receiving import PhotoReceiverManager
+from utils import MessagesToMain, SettingsManager
+from messages_to_main_checker import MessagesToMainChecker
+
 
 ##########################################################
 
@@ -22,6 +20,10 @@ def setup_project():
     """
     Настройка проекта
     """
+
+    if not os.path.exists(debug_dir):
+        os.mkdir(debug_dir)
+
     resource_storage = ResourcesStorage()
 
     # Подключим обработку завершающих сигналов
