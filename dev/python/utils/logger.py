@@ -9,6 +9,7 @@ import logging
 # External imports
 
 # User imports
+from consts import debug_dir
 
 ##########################################################
 
@@ -23,7 +24,7 @@ class Logger:
             datefmt='%d-%m-%Y %H:%M:%S'
         )
 
-        file_handler = logging.FileHandler(log_filename, encoding='utf-8')
+        file_handler = logging.FileHandler(f'{debug_dir}/{log_filename}.log',mode='w', encoding='utf-8')
         file_handler.setLevel(log_level)
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
@@ -40,9 +41,9 @@ class Logger:
         """Логирование предупреждений"""
         self.logger.warning(message)
 
-    def error(self, message):
+    def error(self, message, **kwargs):
         """Логирование ошибок"""
-        self.logger.error(message)
+        self.logger.error(message, **kwargs)
 
     def critical(self, message):
         """Логирование критических ошибок"""

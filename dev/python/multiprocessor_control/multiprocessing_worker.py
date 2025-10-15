@@ -1,17 +1,15 @@
 # System imports
-import threading
 from abc import abstractmethod
-import sys
 from multiprocessing import Queue as ProcessQueue
 from threading import Thread, current_thread
-from typing import Callable
-import signal
+import asyncio
 
 # External imports
 
 # User imports
 from messages import Message
 from consts import signals
+from utils import Logger
 
 ##########################################################
 
@@ -34,6 +32,8 @@ class MultiprocessingWorker:
         self._cleanup_done_flag: bool = False
         self._working_in_subthreads: bool = False
 
+        self._logger: Logger = None
+
     def __del__(self):
         if not self._cleanup_done_flag:
             self.cleanup()
@@ -41,6 +41,7 @@ class MultiprocessingWorker:
     def cleanup(self):
         """ Явный метод отчистки """
         self._working_in_subthreads = False
+        self._logger.debug('Doing cleanup')
         for thread in self._executors:
             if thread.is_alive() and thread.ident != current_thread().ident:
                 thread.join()
@@ -65,16 +66,18 @@ class MultiprocessingWorker:
     def new_message(self, message: Message):
         """ Добавление нового сообщения в очередь сообщений в основной процесс """
         self._message_queue.put(message)
+        self._logger.debug(message=f'\n{message.to_format_string()}')
 
     def _checking_command_queue(self):
         """ Постоянная проверка очереди поступивших команд """
-        while self._working_in_subthreads:
+        while self._working_in_subthreads or not self._command_queue.empty():
             if not self._command_queue.empty():
                 try:
                     command = str(self._command_queue.get())
+                    self._logger.debug(message=f'input command = {command}')
                     self._command_handler(command)
-                except ValueError:
-                    pass
+                except ValueError as error:
+                    self._logger.error(f'Ошибка в отработке команды', exc_info=True, stack_info=True)
 
     def _command_handler(self, command_name: str, *args, **kwargs):
         """ Метод для обработки поступивших команд """

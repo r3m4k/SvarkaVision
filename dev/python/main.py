@@ -16,6 +16,7 @@ from messages_to_main_checker import MessagesToMainChecker
 
 ##########################################################
 
+
 def setup_project():
     """
     Настройка проекта

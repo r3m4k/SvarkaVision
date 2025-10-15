@@ -1,11 +1,12 @@
 # System imports
 import socket
 from threading import Thread
+import logging
 
 # External imports
 
 # User imports
-from utils import SettingsManager
+from utils import SettingsManager, Logger
 from multiprocessor_control import MultiprocessingWorker
 from messages import Message, MessageMode
 from .photo_source import PhotoSource
@@ -28,19 +29,31 @@ class PhotoReceiver(MultiprocessingWorker):
 
         # Отправим сообщение о корректном завершении работы
         self.new_message(Message(MessageMode.LogInfo, "Cleanup in PhotoReceiver is done"))
+        self._logger.debug(f'cleanup done, self._foo_index = {self._foo_index}')
 
     def _setup(self):
         # self._init_server()
+
+        # Настроим логгер
+        self._logger = Logger(
+            log_filename='photo_receiver_logger',
+            name='photo_receiver_logger',
+            log_level=logging.DEBUG
+        )
+        self._logger.debug('Doing _setup')
 
         # Тут надо запустить планировщик задач
         self._executors.append(
             Thread(target=self._foo_func, args=(), daemon=True)
         )
 
+        self._logger.debug('_setup done')
+
     def _foo_func(self):
         while self._working_in_subthreads:
             self._foo_index += 1
-            self.new_message(Message(MessageMode.LogInfo, f"Tick #{self._foo_index}"))
+            if not self._foo_index % 1000000:
+                self.new_message(Message(MessageMode.LogInfo, f"Tick #{self._foo_index}"))
 
     def _init_server(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
