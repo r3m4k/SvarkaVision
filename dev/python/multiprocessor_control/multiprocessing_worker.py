@@ -3,11 +3,12 @@ from abc import abstractmethod
 from multiprocessing import Queue as ProcessQueue
 from threading import Thread, current_thread
 import asyncio
+from typing import Callable
 
 # External imports
 
 # User imports
-from messages import Message
+from messages import Message, MessageMode
 from consts import signals
 from utils import Logger
 
@@ -23,16 +24,23 @@ class MultiprocessingWorker:
     """
 
     def __init__(self, command_queue: ProcessQueue, message_queue: ProcessQueue):
+        self._loop = asyncio.new_event_loop()   # Основной планировщик задач работника
+        self._tasks: list[asyncio.Task] = []    # Список задач, которые запустятся при self.start
+        asyncio.set_event_loop(self._loop)
+
         self._command_queue = command_queue     # Очередь поступивших команд из основного процесса
         self._message_queue = message_queue     # Очередь для отправки сообщений в основной процесс
 
-        self._executors: list[Thread] = list()    # Список дополнительных потоков
-
         # Необходимые флаги
         self._cleanup_done_flag: bool = False
-        self._working_in_subthreads: bool = False
+        self._running_flag: bool = False
 
+        # Дополнительные ресурсы
         self._logger: Logger = None
+        self._command_handlers: dict[str, Callable[[], None]] = {
+            'cleanup': self.cleanup,
+            'echo': lambda: self._message_queue.put(f'{self.__class__.__name__} -> echo')
+        }
 
     def __del__(self):
         if not self._cleanup_done_flag:
@@ -40,55 +48,54 @@ class MultiprocessingWorker:
 
     def cleanup(self):
         """ Явный метод отчистки """
-        self._working_in_subthreads = False
+        self._running_flag = False
         self._logger.debug('Doing cleanup')
-        for thread in self._executors:
-            if thread.is_alive() and thread.ident != current_thread().ident:
-                thread.join()
+
+        self._loop.call_soon_threadsafe(self._loop.stop)
+
+        self._logger.debug(f'{self.__class__.__name__}: cleanup done')
 
     def start(self):
         """ Метод, инициирующий начало работы """
-        self._working_in_subthreads = True
+        self._running_flag = True
         self._setup()
 
-        # Создадим и запустим потоки, в которых будет выполняться логика работы
-        self._executors.append(
-            Thread(target=self._checking_command_queue, args=(), daemon=True)
-        )
-        for thread in self._executors:
-            thread.start()
+        # Запустим планировщик
+        try:
+            self._loop.run_forever()
+
+        # Отработаем остановку выполнения задач после вызова self._cleanup
+        finally:
+            for task in self._tasks:
+                task.cancel()
+            self._loop.run_until_complete(asyncio.gather(*self._tasks, return_exceptions=True))
+            self._loop.close()
+            self._new_message(Message(MessageMode.LogInfo,
+                                      f'{self.__class__.__name__} stopped'))
 
     @abstractmethod
     def _setup(self):
         """ Метод запуска выполнения работника """
         pass
 
-    def new_message(self, message: Message):
+    def _new_message(self, message: Message):
         """ Добавление нового сообщения в очередь сообщений в основной процесс """
         self._message_queue.put(message)
         self._logger.debug(message=f'\n{message.to_format_string()}')
 
-    def _checking_command_queue(self):
-        """ Постоянная проверка очереди поступивших команд """
-        while self._working_in_subthreads or not self._command_queue.empty():
+    async def _checking_command_queue(self):
+        """ Метод для проверки очереди поступивших команд """
+        while self._running_flag:
             if not self._command_queue.empty():
-                try:
-                    command = str(self._command_queue.get())
-                    self._logger.debug(message=f'input command = {command}')
-                    self._command_handler(command)
-                except ValueError as error:
-                    self._logger.error(f'Ошибка в отработке команды', exc_info=True, stack_info=True)
+                command: str = self._command_queue.get()
+                self._input_command_handler(command)
 
-    def _command_handler(self, command_name: str, *args, **kwargs):
-        """ Метод для обработки поступивших команд """
+            await asyncio.sleep(1)
 
-        # TODO: при успешном приёме команды необходимо в очередь сообщений отправить
-        #       подтверждение получения и статус выполнения, которые будут отслеживаться
-        #       менеджером в основном процессе программы.
-
-        if hasattr(self, command_name) and callable(getattr(self, command_name)):
-            method = getattr(self, command_name)
-            return method(*args, **kwargs)
-        else:
-            raise ValueError(f"Unknown command: {command_name}")
-
+    def _input_command_handler(self, command: str):
+        """ Метод вызова нужного обработчика поступившей команды """
+        try:
+            command_handler = self._command_handlers[command]
+            command_handler()
+        except KeyError:
+            self._new_message(Message(MessageMode.LogInfo, f'Unknown command {command}'))

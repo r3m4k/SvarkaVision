@@ -5,12 +5,13 @@ from threading import Thread
 # External imports
 
 # User imports
-from utils import Singleton
+from utils import singleton
 from messages import Message
 
 ##########################################################
 
-class MessagesToMain(Singleton):
+@singleton
+class MessagesToMain:
     """
     Класс, реализующий одиночную очередь сообщений основному потоку.
     Должен использоваться исключительно в рамках одного процесса!

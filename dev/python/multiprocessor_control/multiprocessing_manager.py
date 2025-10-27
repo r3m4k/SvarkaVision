@@ -43,7 +43,11 @@ class MultiprocessingManager(Resource):
 
     def setup(self):
         # Запустим self._worker в другом процессе
-        self._worker_process = run_in_new_process(run_mlt_worker, self._worker, self._commands_to_worker, self._messages_from_worker)
+        self._worker_process = run_in_new_process(
+            run_mlt_worker,
+            self._worker, self._commands_to_worker,
+            self._messages_from_worker
+        )
 
         # Запустим проверку сообщений от работника в новом потоке
         self._working_in_subthreads = True

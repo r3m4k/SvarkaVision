@@ -1,4 +1,5 @@
 # System imports
+import asyncio
 import socket
 from threading import Thread
 import logging
@@ -16,22 +17,25 @@ from .photo_source import PhotoSource
 class PhotoReceiver(MultiprocessingWorker):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.server: socket.socket = None
-        self._photo_source: PhotoSource = PhotoSource()
+        self.server: socket.socket
+        # self._photo_source: PhotoSource = PhotoSource()
 
-        self._foo_index: int = 0
-
+    # --------------------------------
+    # Основные методы класса
+    # --------------------------------
     def cleanup(self):
-        super().cleanup()               # Вызовем отчистку у родительского класса
-
-        self._photo_source.cleanup()    # Завершим работу источника фотографий
+        # self._photo_source.cleanup()    # Завершим работу источника фотографий
         # self.server.close()             # Завершим работу TCP сервера
 
         # Отправим сообщение о корректном завершении работы
-        self.new_message(Message(MessageMode.LogInfo, "Cleanup in PhotoReceiver is done"))
+        self._new_message(Message(MessageMode.LogInfo, "Cleanup in PhotoReceiver is done"))
         self._logger.debug(f'cleanup done, self._foo_index = {self._foo_index}')
 
+        # Вызовем отчистку у родительского класса
+        super().cleanup()
+
     def _setup(self):
+        # Настроим TCP сервер
         # self._init_server()
 
         # Настроим логгер
@@ -40,26 +44,28 @@ class PhotoReceiver(MultiprocessingWorker):
             name='photo_receiver_logger',
             log_level=logging.DEBUG
         )
-        self._logger.debug('Doing _setup')
 
-        # Тут надо запустить планировщик задач
-        self._executors.append(
-            Thread(target=self._foo_func, args=(), daemon=True)
-        )
+        # Добавим задачи для планировщика задач
+        self._tasks.append(self._loop.create_task(self._foo_func()))
 
-        self._logger.debug('_setup done')
+    async def _foo_func(self):
+        index = 0
+        while self._running_flag:
+            await asyncio.sleep(1)
+            index += 1
+            self._new_message(Message(MessageMode.LogInfo,
+                                      f'{self.__class__.__name__} -> foo_func({index})'))
 
-    def _foo_func(self):
-        while self._working_in_subthreads:
-            self._foo_index += 1
-            if not self._foo_index % 1000000:
-                self.new_message(Message(MessageMode.LogInfo, f"Tick #{self._foo_index}"))
-
+    # --------------------------------
+    # Методы для работы с TCP сервером
+    # --------------------------------
     def _init_server(self):
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        settings_manager = SettingsManager()
-        host = settings_manager.settings['PhotoReceiving']['host']
-        port = settings_manager.settings['PhotoReceiving']['port']
+        """ Настройка TCP сервера """
+        # self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # settings_manager = SettingsManager()
+        # host = settings_manager.settings['PhotoReceiving']['host']
+        # port = settings_manager.settings['PhotoReceiving']['port']
+        pass
 
     def _requests_handler(self):
         """
