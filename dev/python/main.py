@@ -62,7 +62,7 @@ def main():
     setup_project()
 
     while True:
-        sleep(1)
+        continue
 
 
 def enf_of_program(signum, frame):

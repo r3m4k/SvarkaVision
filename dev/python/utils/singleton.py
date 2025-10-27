@@ -7,20 +7,19 @@ import threading
 
 ##########################################################
 
-class Singleton:
-    """
-    Потокобезопасный класс для реализации паттерна Singleton
-    """
-    _instance = None
-    _lock = threading.Lock()
+"""
+Лучше использовать функцию, а не класс Singleton, тк
+при создании объекта будет вызван метод __init__, 
+в котором может происходить выделение ресурсов, а 
+предотвращение повторного выделение ресурсов требует
+дополнительного подхода, который не получилось разработать
+"""
+def singleton(class_):
+    instances = {}
 
-    def __new__(cls, *args, **kwargs):
-        with cls._lock:
-            if cls._instance is None:
-                cls._instance = super().__new__(cls)
-            return cls._instance
+    def get_instance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
 
-    def __init__(self, *args, **kwargs):
-        if not getattr(self, '_initialized', False):
-            self._initialized = True
-            super().__init__(*args, **kwargs)
+    return get_instance

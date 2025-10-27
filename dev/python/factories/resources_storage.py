@@ -6,7 +6,7 @@ from pprint import pformat
 # External imports
 
 # User imports
-from utils import Singleton
+from utils import singleton
 
 ##########################################################
 
@@ -35,7 +35,8 @@ class Resource(ABC):
 
 # --------------------------------------
 
-class ResourcesStorage(Singleton):
+@singleton
+class ResourcesStorage:
     """
     Класс, в котором будем хранить все ресурсы, созданные
     в основном процессе работы программы
