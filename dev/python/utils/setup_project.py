@@ -8,11 +8,9 @@ from time import sleep
 
 # User imports
 from consts import Mode, signals, debug_dir
-from factories import ResourcesStorage
-from factories import PhotoReceiverManagerFactory
-from utils import MessagesToMain, SettingsManager
+from factories import ResourcesStorage, PhotoReceiverManagerFactory
 from messages_to_main_checker import MessagesToMainChecker
-
+from .end_of_program import enf_of_program
 
 ##########################################################
 
@@ -35,9 +33,9 @@ def setup_project():
     PhotoReceiverManagerFactory().create_resource()
 
     # Инициализируем проверку сообщений в основной поток
-    # ВАЖНО инициализировать проверку сообщений в самом конце,
-    # для отработки всех сообщений при завершении программы
-    MessagesToMainChecker()
+    # ВАЖНО инициализировать проверку сообщений в самом конце, для отработки всех сообщений при завершении программы
+    # MessagesToMainChecker()
 
     # Запустим все ресурсы
     resource_storage.setup_all()
+    resource_storage.start_all()

@@ -13,8 +13,8 @@ class PhotoReceiverManager(MultiprocessingManager):
     Класс, предназначенный для запуска приёмника фотографий
     и для управления им
     """
-    def __init__(self, resource_name: str, **kwargs):
-        super().__init__(resource_name)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._worker = PhotoReceiver
 
 # --------------------------------------

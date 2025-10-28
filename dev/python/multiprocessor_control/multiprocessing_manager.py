@@ -42,12 +42,11 @@ class MultiprocessingManager(Resource):
             self.cleanup()
 
     def setup(self):
-        # Запустим self._worker в другом процессе
-        self._worker_process = run_in_new_process(
-            run_mlt_worker,
-            self._worker, self._commands_to_worker,
-            self._messages_from_worker
-        )
+        # Запустим self._worker в другом процессе через функцию run_mlt_worker
+        self._worker_process = Process(target=run_mlt_worker,
+                                       args=(self._worker, self._commands_to_worker, self._messages_from_worker),
+                                       daemon=True)
+        self._worker_process.start()
 
         # Запустим проверку сообщений от работника в новом потоке
         self._working_in_subthreads = True
@@ -57,14 +56,15 @@ class MultiprocessingManager(Resource):
         for thread in self._executors:
             thread.start()
 
+    def start(self):
+        pass
+
     def cleanup(self):
         """ Явный метод отчистки использованных ресурсов """
         self._cleanup_done_flag= True
 
         # Завершим работу дочернего процесса, в котором запущен работник
         self._commands_to_worker.put('cleanup')
-        sleep(1)
-        self._worker_process.terminate()
         self._worker_process.join()
 
         # Завершим работу всех дочерних процессов

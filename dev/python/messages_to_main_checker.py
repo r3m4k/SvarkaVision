@@ -36,6 +36,9 @@ class MessagesToMainChecker(Resource):
     def setup(self):
         self._executor_thread.start()
 
+    def start(self):
+        pass
+
     def commands_executor(self, command_name: str, *args, **kwargs):
         return
 

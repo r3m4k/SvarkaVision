@@ -8,7 +8,7 @@ __author__ = 'Roman Romanovskiy'
 
 from .singleton import singleton
 from .settings_manager import SettingsManager
-from .logger import Logger
+from .logger import Logger, AppLogger
 from .messages_to_main import MessagesToMain
 from .setup_project import setup_project
 from .end_of_program import enf_of_program
@@ -18,6 +18,7 @@ from .end_of_program import enf_of_program
 __all__ = [
     'singleton',
     'Logger',
+    'AppLogger',
     'MessagesToMain',
     'SettingsManager',
     'setup_project',
