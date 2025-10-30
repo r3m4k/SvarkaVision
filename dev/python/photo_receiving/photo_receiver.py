@@ -29,12 +29,11 @@ class PhotoReceiver(MultiprocessingWorker):
 
         # Отправим сообщение о корректном завершении работы
         self._new_message(Message(MessageMode.LogInfo, "Cleanup in PhotoReceiver is done"))
-        self._logger.debug(f'cleanup done, self._foo_index = {self._foo_index}')
 
         # Вызовем отчистку у родительского класса
         super().cleanup()
 
-    def _setup(self):
+    def setup(self):
         # Настроим TCP сервер
         # self._init_server()
 
@@ -51,7 +50,7 @@ class PhotoReceiver(MultiprocessingWorker):
     async def _foo_func(self):
         index = 0
         while self._running_flag:
-            await asyncio.sleep(1)
+            await asyncio.sleep(2)
             index += 1
             self._new_message(Message(MessageMode.LogInfo,
                                       f'{self.__class__.__name__} -> foo_func({index})'))
