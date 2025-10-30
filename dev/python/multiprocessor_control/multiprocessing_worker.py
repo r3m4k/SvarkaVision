@@ -1,8 +1,8 @@
 # System imports
 from abc import abstractmethod
+import asyncio
 from multiprocessing import Queue as ProcessQueue
 from threading import Thread, current_thread
-import asyncio
 from typing import Callable
 
 # External imports
@@ -46,19 +46,28 @@ class MultiprocessingWorker:
         if not self._cleanup_done_flag:
             self.cleanup()
 
+    # --------------------------------
+    # Основные методы базового класса
+    # --------------------------------
+
     def cleanup(self):
         """ Явный метод отчистки """
         self._running_flag = False
         self._logger.debug('Doing cleanup')
 
-        self._loop.call_soon_threadsafe(self._loop.stop)
+        try:
+            self._loop.call_soon_threadsafe(self._loop.stop)
+        except RuntimeError:    #   RuntimeError('Event loop is closed')
+            pass
 
         self._logger.debug(f'{self.__class__.__name__}: cleanup done')
 
     def start(self):
         """ Метод, инициирующий начало работы """
         self._running_flag = True
-        self._setup()
+        self.setup()
+
+        self._tasks.append(self._loop.create_task(self._checking_command_queue()))
 
         # Запустим планировщик
         try:
@@ -67,16 +76,23 @@ class MultiprocessingWorker:
         # Отработаем остановку выполнения задач после вызова self._cleanup
         finally:
             for task in self._tasks:
+                self._logger.debug(f'Canceling task {task}')
                 task.cancel()
+
             self._loop.run_until_complete(asyncio.gather(*self._tasks, return_exceptions=True))
             self._loop.close()
+            self._logger.debug(f'{self._loop} stopped')
             self._new_message(Message(MessageMode.LogInfo,
                                       f'{self.__class__.__name__} stopped'))
 
     @abstractmethod
-    def _setup(self):
-        """ Метод запуска выполнения работника """
+    def setup(self):
+        """ Абстрактный метод конфигурации работника """
         pass
+
+    # --------------------------------
+    # Собственные методы класса
+    # --------------------------------
 
     def _new_message(self, message: Message):
         """ Добавление нового сообщения в очередь сообщений в основной процесс """
@@ -88,9 +104,10 @@ class MultiprocessingWorker:
         while self._running_flag:
             if not self._command_queue.empty():
                 command: str = self._command_queue.get()
+                self._logger.debug(f'New command: {command}')
                 self._input_command_handler(command)
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
 
     def _input_command_handler(self, command: str):
         """ Метод вызова нужного обработчика поступившей команды """

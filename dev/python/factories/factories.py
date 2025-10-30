@@ -2,6 +2,7 @@
 from abc import ABC
 from typing import Type
 
+from utils import AppLogger
 # External imports
 
 # User imports
@@ -16,6 +17,9 @@ class BaseFactory(ABC):
     """
     resource = None
 
+    def __init__(self):
+        self._app_logger = AppLogger()
+
     def create_resource(self, resource_name: str = 'resource', **kwargs) -> Resource:
         """ Метод для создания ресурса """
         if self.resource is not None:
@@ -24,9 +28,9 @@ class BaseFactory(ABC):
         else:
             raise RuntimeError('self.resource is None')
 
-    @staticmethod
-    def _register_resource(resource: Resource):
+    def _register_resource(self, resource: Resource):
         """ Метод для добавления ресурса в ResourceStorage """
+        self._app_logger.info(f'\n{self.__class__.__name__}:\tregister new resource {resource}')
         ResourcesStorage().add_resource(resource)
 
 # --------------------------------------

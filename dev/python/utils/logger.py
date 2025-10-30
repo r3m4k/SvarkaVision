@@ -1,9 +1,5 @@
 # System imports
-from datetime import datetime
 import os
-import sys
-from enum import IntEnum
-import traceback
 import logging
 
 # External imports
@@ -43,7 +39,7 @@ class Logger:
             os.rename(log_file, new_filename)
 
         formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s: %(message)s',
+            '%(asctime)s.%(msecs)03d - %(levelname)s: %(message)s',
             datefmt='%d-%m-%Y %H:%M:%S'
         )
 

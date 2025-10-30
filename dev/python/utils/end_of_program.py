@@ -7,7 +7,7 @@ import signal
 # User imports
 from consts import signals
 from factories import ResourcesStorage
-from utils import MessagesToMain
+from utils import MessagesToMain, AppLogger
 from messages_to_main_checker import MessagesToMainChecker
 
 
@@ -16,12 +16,12 @@ from messages_to_main_checker import MessagesToMainChecker
 
 def enf_of_program(signum, frame):
     resource_storage = ResourcesStorage()
+    app_logger = AppLogger()
 
-    print(f'Получен сигнал {signals[signum]}')
+    app_logger.info(f'Signal {signals[signum]} has been received')
     resource_storage.cleanup_all()
 
-    print(f'ResourcesStorage:\n'
-          f'{resource_storage}')
-    print(f'MessagesToMain().qsize(): {MessagesToMain().qsize()}')
+    app_logger.info(f'ResourcesStorage:\n'
+                    f'{resource_storage}')
 
     sys.exit(0)

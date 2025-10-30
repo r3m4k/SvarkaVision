@@ -34,51 +34,56 @@ class MultiprocessingManager(Resource):
         self._messages_from_worker: ProcessQueue = ProcessQueue()       # Очередь поступивших сообщений от работника
 
         # Необходимые флаги
-        self._cleanup_done_flag = False
+        self._cleanup_done: bool = False
         self._working_in_subthreads: bool = False
 
     def __del__(self):
-        if not self._cleanup_done_flag:
+        if not self._cleanup_done:
             self.cleanup()
 
+    # -------------------------------------------
+    # Реализация наследуемых методов
+    # -------------------------------------------
+
     def setup(self):
-        # Запустим self._worker в другом процессе через функцию run_mlt_worker
+        # Настроим self._worker для запуска работника в новом процессе
         self._worker_process = Process(target=run_mlt_worker,
                                        args=(self._worker, self._commands_to_worker, self._messages_from_worker),
                                        daemon=True)
-        self._worker_process.start()
 
         # Запустим проверку сообщений от работника в новом потоке
-        self._working_in_subthreads = True
         self._executors.append(
             Thread(target=self._checking_messages_from_worker, args=(), daemon=True)
         )
+
+    def start(self):
+        """ Метод для запуска всех потоков и процессов """
+        self._working_in_subthreads = True
+
+        self._worker_process.start()
         for thread in self._executors:
             thread.start()
 
-    def start(self):
-        pass
-
     def cleanup(self):
         """ Явный метод отчистки использованных ресурсов """
-        self._cleanup_done_flag= True
+        self._cleanup_done= True
+        self._working_in_subthreads = False
 
         # Завершим работу дочернего процесса, в котором запущен работник
         self._commands_to_worker.put('cleanup')
         self._worker_process.join()
 
         # Завершим работу всех дочерних процессов
-        self._working_in_subthreads = False
         for thread in self._executors:
             thread.join()
 
     def commands_executor(self, command_name: str, *args, **kwargs):
         """ Обработка поступившей команды """
-        if hasattr(self, command_name) and callable(getattr(self, command_name)):
-            method = getattr(self, command_name)
-            return method(*args, **kwargs)
-        else:
-            raise ValueError(f"Unknown command: {command_name}")
+        pass
+
+    # -------------------------------------------
+    # Реализация собственных методов
+    # -------------------------------------------
 
     def _checking_messages_from_worker(self):
         while self._working_in_subthreads:

@@ -56,54 +56,72 @@ class ResourcesStorage:
     def get_resource(self, name: str) -> Resource:
         if name in self._resources.keys():
             resource = self._resources[name]
-            self._app_logger.debug(f'\nResource requested {resource} with name {resource.name}')
+            self._app_logger.debug(f'\n{self.__class__.__name__}:\tResource requested {resource} with name {resource.name}')
             return resource
         else:
-            raise KeyError(f"Resource '{name}' not found")
+            self._app_logger.exception(f'\n{self.__class__.__name__}:\tResource "{name}" not found')
+            raise KeyError(f'Resource "{name}" not found')
 
     def add_resource(self, resource: Resource):
         """
         Добавление ресурса в словарь, содержащий все остальные ресурсы
         """
-        self._app_logger.debug(f'\nAdded resource {resource} with name {resource.name}')
+        self._app_logger.debug(f'\n{self.__class__.__name__}:\tAdded resource {resource} with name {resource.name}')
         self._resources[resource.name] = resource
 
     def cleanup_all(self):
         """
         Явный вызов методов cleanup у всех сохранённых ресурсов
         """
+        # -----------------------
+        self._app_logger.info(f'\nCall the method {self.__class__.__name__}.cleanup_all()')
+        # -----------------------
+
         for resource in self._resources.values():
-            self._app_logger.debug(f'\nCall the method {resource}.cleanup()')
+            self._app_logger.debug(f'\n{self.__class__.__name__}:\tCall the method {resource}.cleanup()')
             resource.cleanup()
 
         for thread in self._threads:
-            self._app_logger.debug(f'\nJoining thread {thread}')
+            self._app_logger.debug(f'\n{self.__class__.__name__}:\tJoining thread {thread}')
             thread.join()
 
-        self._app_logger.debug(f'\n{self.__class__.__name__}.cleanup_all() is completed')
+        # -----------------------
+        self._app_logger.info(f'\n{self.__class__.__name__}.cleanup_all() is completed')
+        # -----------------------
 
     def setup_all(self):
         """
         Явный метод конфигурирования всех ресурсов
         """
+        # -----------------------
+        self._app_logger.info(f'\nCall the method {self.__class__.__name__}.setup_all()')
+        # -----------------------
+
         for resource in self._resources.values():
             self._app_logger.debug(f'\nCall the method {resource}.setup()')
             resource.setup()
 
-        # for thread in self._threads:
-        #     thread.start()
-
-        self._app_logger.debug(f'\n{self.__class__.__name__}.setup_all() is completed')
+        # -----------------------
+        self._app_logger.info(f'\n{self.__class__.__name__}.setup_all() is completed')
+        # -----------------------
 
     def start_all(self):
         """
         Метод для запуска метода start() у всех ресурсов в новых потоках
         """
+        # -----------------------
+        self._app_logger.info(f'\nCall the method {self.__class__.__name__}.start_all()')
+        # -----------------------
+
         for resource in self._resources.values():
             thread = Thread(target=resource.start, args=(), daemon=True)
             self._threads.append(thread)
             thread.start()
             self._app_logger.debug(f'\nCall {resource}.start() in {thread}')
+
+        # -----------------------
+        self._app_logger.info(f'\n{self.__class__.__name__}.start_all() is completed')
+        # -----------------------
 
     def __str__(self):
         return pformat(self._resources)

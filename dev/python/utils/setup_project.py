@@ -32,9 +32,9 @@ def setup_project():
     # Инициализируем источник фотографий
     PhotoReceiverManagerFactory().create_resource()
 
-    # Инициализируем проверку сообщений в основной поток
+    # Инициализируем проверку сообщений
     # ВАЖНО инициализировать проверку сообщений в самом конце, для отработки всех сообщений при завершении программы
-    # MessagesToMainChecker()
+    MessagesToMainChecker()
 
     # Запустим все ресурсы
     resource_storage.setup_all()
