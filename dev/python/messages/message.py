@@ -23,13 +23,16 @@ class MessageMode(Enum):
 
 class Message:
     def __init__(self, mode: MessageMode, body: str):
-        self.mode: MessageMode =  mode
+        self.mode: MessageMode = mode
         self.body: str = body
         self._separator = '__'
 
     def __str__(self):
-        print('1')
         return self.mode.value + self._separator + self.body
+
+    def to_format_string(self):
+        return (f'# --------------------------------------\n'
+                f'{self.mode}:\n{self.body}')
 
     def from_string(self, str_msg: str):
         mode, msg = str_msg.split(self._separator)
