@@ -4,7 +4,7 @@ import socket
 # External imports
 
 # User imports
-from SvarkaAI.report import Report
+from svarkaAI.report import Report
 from .Interfaces import AbstractInterface
 
 ##########################################################
